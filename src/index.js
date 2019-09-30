@@ -4,8 +4,9 @@ import { StatusBar } from 'react-native';
 import './config/ReactotronConfig';
 
 import Routes from './routes';
+import Header from './pages/Header/index';
 
-export default function App() {
+function App() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
@@ -13,3 +14,5 @@ export default function App() {
     </>
   );
 }
+
+export default App;
