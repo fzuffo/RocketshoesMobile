@@ -79,13 +79,15 @@ export const CustomTouchable = styled.TouchableOpacity`
 `;
 
 export const CustomViewCart = styled.View`
+  flex-direction: row;
   height: 100%;
   width: 33%;
   background: ${darken(0.05, '#7159c1')};
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  padding: 10px;
 `;
 
 export const CustomView = styled.View`

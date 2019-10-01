@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import { FlatList } from 'react-native';
 import PropTypes from 'prop-types';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import { formatPrice } from '../../util/format';
 import api from '../../services/api';
 
@@ -56,17 +57,15 @@ class Main extends Component {
   handleAddProduct = product => {
     const { addToCart, navigation } = this.props;
 
-    // dispatch({
-    //   type: 'ADD_TO_CART',
-    //   product,
-    // });
     addToCart(product);
 
-    navigation.navigate('Cart');
+    // navigation.navigate('Cart');
   };
 
   render() {
     const { products } = this.state;
+    const { amount } = this.props;
+    console.tron.log(this.props);
 
     return (
       <Container>
@@ -86,7 +85,8 @@ class Main extends Component {
                 }}
               >
                 <CustomViewCart>
-                  <CustomText>1</CustomText>
+                  <Icons name="add-shopping-cart" size={14} color="#fff" />
+                  <CustomText>{amount[item.id] || 0}</CustomText>
                 </CustomViewCart>
                 <CustomView>
                   <CustomText>ADICIONAR</CustomText>
@@ -100,10 +100,18 @@ class Main extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+
+    return amount;
+  }, {}),
+});
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(CartActions, dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Main);
