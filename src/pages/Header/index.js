@@ -1,30 +1,20 @@
-// import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
-// import { View, Text } from 'react-native';
+import React from 'react';
+import { connect } from 'react-redux';
 
-// import { HeaderView, LogoImage, Cart, CartText } from './styles';
-// import Logo from '../img/Logo.png';
-// import Main from '../Main/index';
+import { HeaderView, LogoImage, Cart, CartText } from './styles';
+import Logo from '../img/Logo.png';
 
-// export default class Header extends Component {
-//   static navigationOptions = {
-//     title: 'Head',
-//   };
+function Header({ cartSize }) {
+  return (
+    <HeaderView>
+      <LogoImage source={Logo} />
+      <Cart>
+        <CartText>{cartSize}</CartText>
+      </Cart>
+    </HeaderView>
+  );
+}
 
-//   componentDidMount() {
-//     console.tron.log('header:', this.props);
-//   }
-
-//   render() {
-//     const { navigation } = this.props;
-
-//     return (
-//       <HeaderView>
-//         <LogoImage source={Logo} />
-//         <Cart onPress={() => navigation.navigate('Cart')}>
-//           <CartText>3</CartText>
-//         </Cart>
-//       </HeaderView>
-//     );
-//   }
-// }
+export default connect(state => ({
+  cartSize: state.cart.length,
+}))(Header);

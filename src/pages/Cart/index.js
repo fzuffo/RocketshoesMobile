@@ -1,15 +1,19 @@
-import React, { Component } from 'react';
-import { View, TextInput, FlatList } from 'react-native';
-import PropTypes from 'prop-types';
-import api from '../../services/api';
-import Logo from '../img/Logo.png';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { TextInput, FlatList, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Inicons from 'react-native-vector-icons/Ionicons';
+
+import Header from '../Header/index';
+
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   ShoppingList,
   ProductInfo,
   ProductImage,
   ProductTitle,
-  CartItems,
   Amount,
   TotalText,
   TotalAmount,
@@ -21,88 +25,77 @@ import {
   CartItemsBox,
   TouchableOpacityCustom,
   TextButton,
+  CartItemBoxView,
 } from './styles';
 
-import {
-  Container,
-  HeaderView,
-  LogoImage,
-  ShoppingCart,
-  CartText,
-} from '../Main/styles';
+import { Container } from '../Main/styles';
 
-export default class Cart extends Component {
-  static navigationOptions = {
-    title: 'Cart',
-  };
+function Cart({ cart, removeFromCart }) {
+  return (
+    <Container>
+      <Header />
 
-  state = {
-    products: [],
-  };
-
-  // static propTypes = {
-  //   navigation: PropTypes.shape({
-  //     navigate: PropTypes.func,
-  //   }).isRequired,
-  // };
-
-  async componentDidMount() {
-    const response = await api.get('products');
-
-    const data = response.data.map(product => ({
-      ...product,
-    }));
-
-    this.setState({
-      products: data,
-    });
-  }
-
-  render() {
-    // const { navigation } = this.props;
-
-    const { products } = this.state;
-
-    return (
-      <Container>
-        <HeaderView>
-          <LogoImage source={Logo} />
-          <ShoppingCart>
-            <CartText>3</CartText>
-          </ShoppingCart>
-        </HeaderView>
-
-        <ShoppingList>
-          <FlatList
-            data={products}
-            keyExtractor={product => String(product.id)}
-            renderItem={({ item }) => (
-              <ProductInfo>
-                <ProductDetailsView>
-                  <ProductImage source={{ uri: item.image }} />
-                  <ProductView>
-                    <ProductTitle>{item.title}</ProductTitle>
-                    <Amount>{item.price}</Amount>
-                  </ProductView>
-                </ProductDetailsView>
-                <CartInfoView>
+      <ShoppingList>
+        <FlatList
+          data={cart}
+          keyExtractor={product => String(product.id)}
+          renderItem={({ item }) => (
+            <ProductInfo>
+              <ProductDetailsView>
+                <ProductImage source={{ uri: item.image }} />
+                <ProductView>
+                  <ProductTitle>{item.title}</ProductTitle>
+                  <Amount>{item.priceFormatted}</Amount>
+                </ProductView>
+                <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                  <Icon name="delete" size={20} color="#7159c1" />
+                </TouchableOpacity>
+              </ProductDetailsView>
+              <CartInfoView>
+                <CartItemBoxView>
+                  <TouchableOpacity>
+                    <Inicons
+                      name="md-remove-circle-outline"
+                      size={20}
+                      color="#7159c1"
+                    />
+                  </TouchableOpacity>
                   <CartItemsBox>
-                    <TextInput placeholder="Qtd" />
+                    <TextInput editable={false}>{item.amount}</TextInput>
                   </CartItemsBox>
-                  <CartTotal>R$539,70</CartTotal>
-                </CartInfoView>
-              </ProductInfo>
-            )}
-          />
-          <TotalView>
-            <TotalText>TOTAL</TotalText>
-            <TotalAmount>R$ 1619,10</TotalAmount>
-          </TotalView>
-          <TouchableOpacityCustom>
-            <TextButton> FINALIZAR PEDIDO</TextButton>
-          </TouchableOpacityCustom>
-        </ShoppingList>
-      </Container>
-    );
-  }
+                  <TouchableOpacity>
+                    <Inicons
+                      name="md-add-circle-outline"
+                      size={20}
+                      color="#7159c1"
+                    />
+                  </TouchableOpacity>
+                </CartItemBoxView>
+                <CartTotal>R$539,70</CartTotal>
+              </CartInfoView>
+            </ProductInfo>
+          )}
+        />
+        <TotalView>
+          <TotalText>TOTAL</TotalText>
+          <TotalAmount>R$ 1619,10</TotalAmount>
+        </TotalView>
+        <TouchableOpacityCustom>
+          <TextButton> FINALIZAR PEDIDO</TextButton>
+        </TouchableOpacityCustom>
+      </ShoppingList>
+    </Container>
+  );
 }
+
+const mapStateToProps = state => ({
+  cart: state.cart,
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Cart);

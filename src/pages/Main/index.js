@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import { FlatList } from 'react-native';
 import PropTypes from 'prop-types';
-
+import { formatPrice } from '../../util/format';
 import api from '../../services/api';
-import Logo from '../img/Logo.png';
+
+import Header from '../Header/index';
+
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -15,15 +21,11 @@ import {
   CustomView,
   CustomViewCart,
   CustomText,
-  HeaderView,
-  LogoImage,
-  ShoppingCart,
-  CartText,
 } from './styles';
 
 // Animated.View Animated.Text, Animated.Image, Animated.ScrollView
 
-export default class Main extends Component {
+class Main extends Component {
   static navigationOptions = {
     title: 'Home',
   };
@@ -39,33 +41,36 @@ export default class Main extends Component {
   };
 
   async componentDidMount() {
-    console.tron.log('main:', this.props);
     const response = await api.get('products');
 
     const data = response.data.map(product => ({
       ...product,
+      priceFormatted: formatPrice(product.price),
     }));
 
     this.setState({
       products: data,
     });
-
-    // console.tron.log(this.state);
   }
 
-  render() {
-    const { navigation } = this.props;
+  handleAddProduct = product => {
+    const { addToCart, navigation } = this.props;
 
+    // dispatch({
+    //   type: 'ADD_TO_CART',
+    //   product,
+    // });
+    addToCart(product);
+
+    navigation.navigate('Cart');
+  };
+
+  render() {
     const { products } = this.state;
 
     return (
       <Container>
-        <HeaderView>
-          <LogoImage source={Logo} />
-          <ShoppingCart onPress={() => navigation.navigate('Cart')}>
-            <CartText>3</CartText>
-          </ShoppingCart>
-        </HeaderView>
+        <Header />
         <FlatList
           horizontal
           data={products}
@@ -74,8 +79,12 @@ export default class Main extends Component {
             <Product>
               <ProductImage source={{ uri: item.image }} />
               <Title>{item.title}</Title>
-              <Amount>{item.price}</Amount>
-              <CustomTouchable>
+              <Amount>{item.priceFormatted}</Amount>
+              <CustomTouchable
+                onPress={() => {
+                  this.handleAddProduct(item);
+                }}
+              >
                 <CustomViewCart>
                   <CustomText>1</CustomText>
                 </CustomViewCart>
@@ -90,3 +99,11 @@ export default class Main extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Main);

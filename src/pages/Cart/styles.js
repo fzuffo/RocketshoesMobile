@@ -50,6 +50,13 @@ export const CartInfoView = styled.View`
   border-radius: 4px;
   justify-content: space-between;
   align-items: center;
+  padding: 0 25px;
+`;
+
+export const CartItemBoxView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const CartItemsBox = styled.View`
@@ -60,7 +67,8 @@ export const CartItemsBox = styled.View`
   border: 1px solid #ddd;
   border-radius: 4px;
   justify-content: center;
-  margin-left: 35px;
+  margin: 0 10px;
+  align-items: center;
 `;
 
 export const CartItems = styled.Text`
@@ -70,7 +78,6 @@ export const CartItems = styled.Text`
 `;
 
 export const CartTotal = styled.Text`
-  margin-right: 25px;
   font-size: 16px;
   font-weight: bold;
 `;
